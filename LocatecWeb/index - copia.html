@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>LocatecWeb</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+
+	<h1>Locatec<b>Web</b><br><h2>Paso 2:</h2></h1>
+
+	<form action="/action_page.php">
+		<div class="form-group">
+            <!-- Create dropdown and add specific class '.thenumbers' to ul element -->
+            <div class="dropdown">
+                <div class="dropdown-toggle somename1" data-toggle="dropdown"id="menu1"></div>
+                <ul class="dropdown-menu myclass numberom1 thenumbers" aria-labelledby="menu1" name="thenumbers">
+                    <li value="one">One</li>
+                    <li value="two">Two</li>
+                    <li value="three">Three</li>
+                    <li value="four">Four</li>
+                    <li value="five">Five</li>
+                </ul>
+            </div>
+
+            <!-- Create a hidden input -->
+            <input type='hidden' name='thenumbers'>
+ 
+		</div>
+		<label for="text">Fecha</label>
+		<div class="form-group row">
+			<div class="col-xs-2">
+			  <input class="form-control" placeholder="Día" id="ex1" type="text">
+			</div>
+			<div class="col-xs-2">
+			  <input class="form-control" placeholder="Mes" id="ex2" type="text">
+			</div>
+			<div class="col-xs-2">
+			  <input class="form-control" placeholder="Año" id="ex3" type="text">
+			</div>
+		</div>
+		<div class="form-group">
+	  		<label for="text">Descripción</label>
+	  		<textarea class="form-control" rows="5" id="descripcion"></textarea>
+		</div>
+		<a href="TablaHTML.html"><button type="button" class="btn btn-primary">Enviar</button></a>
+	</form>
+
+</body>
+
+<style type="text/css">
+	
+	body {
+		margin-left: 4%;
+	}
+
+	h1 {
+		margin-top: 4%;
+		margin-bottom: 4%;
+		background-color: 
+	}
+
+	form {
+		margin-right: 40%;
+	}
+
+	.fecha {
+		margin-right: 20%;
+	}
+
+	.row {
+		margin-left: 0px;
+	}
+
+	
+</style>
+
+<script type="text/javascript">
+
+//	
+function ObjetoPerdido () {
+    
+    this.tipo = "";
+    this.descripcion = "";
+    this.fechaPerdido = {
+        dia: 0,
+        mes: 0,
+        anio: 0,
+    };
+
+    this.palabrasClave = [];
+    this.setTipo = function (tipoObjeto) {
+        this.tipo = tipoObjeto;
+    };
+
+    this.llenarDescripcion = function () {
+        
+        //debugger;
+        var aux = this.descripcion;
+        while (aux != "") {
+            var palabra = "";
+            var pos = -1;
+            var ultimaPalabra = false;
+            do {
+                pos = aux.indexOf(" ");
+                if (pos != -1) {
+                    palabra = aux.slice (0, pos+1);
+                    aux = aux.replace(palabra, "");
+                    palabra = palabra.replace(palabra.charAt(palabra.length-1), "");
+                    if (comprobarPalabra(palabra, this))
+                        this.palabrasClave.push(palabra);
+                } else {
+                    if (!ultimaPalabra) {
+                        ultimaPalabra = true;
+                        palabra = aux.slice (0, aux.length);
+                        aux = aux.replace(palabra, "");
+                        if (comprobarPalabra(palabra, this))
+                            this.palabrasClave.push(palabra);
+                    }
+                }
+            } while (pos != -1);
+        }
+    }
+
+    //Regresa similitud
+    //No se utilizara por ahora
+    this.compararDosObjetos = function (objeto2) { //this = objeto en locatec, objeto2 = objeto del request
+        //debugger;
+        var cantidadDePalabrasIguales = 0;
+        for (var i = 0; i < objeto2.palabrasClave.length; i++) {
+            for (var j = 0; j < this.palabrasClave.length; j++) {
+                if (this.palabrasClave[j].toUpperCase() == objeto2.palabrasClave[i].toUpperCase()) {
+                    cantidadDePalabrasIguales++;
+                }
+            }
+        }
+        return (cantidadDePalabrasIguales * 1.0)/(this.palabrasClave.length * 1.0);
+    }
+
+
+    // this.compararTexto = function (busqueda) {
+    //     for (let i = 0; i < this.palabrasClave.length; i++) {
+    //         for (let j = 0; j < busqueda.palabrasClave.length; j++) {
+    //             if (busqueda.palabrasClave[j].toUpperCase() != this.palabrasClave[i].toUpperCase()) {
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     if (this.palabrasClave.length > 0 && busqueda.palabrasClave.length > 0)
+    //         return true;
+    // }
+
+    //Busca que 
+    this.compararTextoConObjeto = function (objeto2) {
+        var encontradas = [];
+        var encontrado;
+        var salir = false;
+        for (let i = 0; i < this.palabrasClave.length && !salir; i++) {
+            encontrado = false;
+            for (let j = 0; j < objeto2.palabrasClave.length; j++) {
+                if (objeto2.palabrasClave[j].toUpperCase() == this.palabrasClave[i].toUpperCase()) {
+                    encontrado = true;
+                }
+            }
+            encontradas.push(encontrado);
+            if (encontradas.length == objeto2.palabrasClave.length)
+                salir = true;
+        }
+        for (let i = 0; i < encontradas.length; i++) {
+            if (encontradas[i] == false)
+                return false;
+        }
+        return true;
+    }
+};
+
+
+// function Busqueda () {
+//     this.tipo = "";
+//     this.texto = "";
+//     this.palabrasClave = [];
+//     this.separarTexto = function () {
+//         var aux = this.texto;
+//         while (aux != "") {
+//             var palabra = "";
+//             var pos = -1;
+//             var ultimaPalabra = false;
+//             do {
+//                 pos = aux.indexOf(" ");
+//                 if (pos != -1) {
+//                     palabra = aux.slice (0, pos+1);
+//                     aux = aux.replace(palabra, "");
+//                     palabra = palabra.replace(palabra.charAt(palabra.length-1), "");
+//                     if (comprobarPalabra(palabra, this))
+//                         this.palabrasClave.push(palabra);
+//                 } else {
+//                     if (!ultimaPalabra) {
+//                         ultimaPalabra = true;
+//                         palabra = aux.slice (0, aux.length);
+//                         aux = aux.replace(palabra, "");
+//                         if (comprobarPalabra(palabra, this))
+//                             this.palabrasClave.push(palabra);
+//                     }
+//                 }
+//             } while (pos != -1);
+//         }
+//     }
+// }
+
+/* 
+    palabras de 3 caracteres
+    "los", "las",
+    "con", "que",
+*/
+var palabrasAIgnorar = ["color", "marca", "tamaño", "tiene", "total"];
+
+//Revisa si agrega una palabra o no al arreglo de palabras claves
+function comprobarPalabra (palabra, objeto) {
+    if (palabra.length > 3) {
+        for (var i = 0; i < palabrasAIgnorar.length; i++) {
+            if (palabrasAIgnorar[i].toUpperCase() == palabra.toUpperCase())
+                return false;
+        }
+        if (objeto.palabrasClave.length > 0) {
+            for (var i = 0; i < objeto.palabrasClave.length; i++) {
+                if (palabra.toUpperCase() == objeto.palabrasClave[i].toUpperCase())
+                    return false;
+            }
+        }
+        if (objeto.tipo.length > 0) {
+            if (objeto.tipo.toUpperCase() == palabra.toUpperCase())
+                return false;
+        }
+        return true;
+    }   
+    return false;
+}
+
+//Guarda el input del HTML
+function recordToFilename() {
+    var input = document.getElementById('objeto').value,
+    tipoInput = input.value;
+    var input = document.getElementById('descripcion').value,
+    descripcionInput = input.value;
+    agregarObjetos();
+}
+
+var arrObjetosPerdidos = [];
+var tipoInput;
+var descripcionInput;
+
+//Agrega objetos perdidos a locatec
+function agregarObjetos () {
+    var objeto = new ObjetoPerdido ();
+    objeto.tipo = tipoInput;
+    objeto.descripcion = descripcionInput;
+    objeto.llenarDescripcion();
+    arrObjetosPerdidos.push(objeto);
+}
+
+/* Envia correos al usuario en caso de que haya similitud 
+function buscarNuevoObjetoPerdido (objetoNuevo) { //COMPLETAR FUNCION ----------------------------------------------------------------------------
+    var porcentaje;
+    for (let i = 0; i < arrObjetosPerdidos.length+1; i++) {
+        porcentaje = arrObjetosPerdidos[i].compararDosObjetos(objetoNuevo);
+        if (porcentaje > 0.5) {
+            if (arrObjetosPerdidos.fechaPerdido > objetoNuevo.fechaPerdido) {
+                //mandar mail
+            }
+        }
+    }
+}
+*/	
+</script>
+</html>
